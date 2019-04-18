@@ -1,68 +1,272 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<!-- markdownlint-disable MD024 -->
 
-## Available Scripts
+# Тестовое задание для Junior Web Development Engineer
 
-In the project directory, you can run:
+**На что мы будем обращать внимание?**
 
-### `npm start`
+- Отношение к деталям. Старайтесь учесть все нюансы, описанные ниже. Чем больше будет неточностей, тем ниже итоговая оценка.
+- Стиль кода. Старайтесь следовать одному стилю. Подключенный в вашем коде линтер однозначно вам в этом поможет.
+- Следование общепринятым паттернам программирования. Наличие антипаттернов в коде приведет к снижению оценки.
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+**На что мы НЕ будем обращать внимание?**
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+- Время выполнения задания. Наша цель - получить качество, а не скорость.
+- Опыт работы. Не обязательно где-то работать до этого, чтобы получить свой шанс. На итоговую оценку никак не будет влиять наличие или отсутствие опыта работы.
+- Комментарии относительно улучшения приложения, полученного в результате тестового задания. Если вы считаете, что какой-то элемент вашего кода можно оптимизировать - стоит это сделать сразу.
 
-### `npm test`
+## Выполнить задачу по созданию API с использованием Node.js и MongoDB
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Базовые требования
 
-### `npm run build`
+- Версия Node.js >= 8
+- Необходимо использовать фреймворк, например `express`
+- Необходимо использовать БД MongoDB 
+- API должно по умолчанию запускаться на http://localhost:8080 с помощью следующей последовательности команд в консоли из папки проекта:
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm i # установка пакетов
+npm start # старт API
+```
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+- API должно иметь 4 метода:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+| Метод                                                | Описание          |
+|------------------------------------------------------|-------------------|
+| **POST** `v1/articles`                               | создание статьи   |
+| **PUT** `v1/articles/:id`                            | обновление статьи |
+| **GET** `v1/articles?page=:pageNumber&limit=:limit`  | получение статей  |
+| **GET** `v1/articles/:id`                            | получение статьи  |
 
-### `npm run eject`
+#### POST v1/articles - создание статьи
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+При создании статьи должны дополнительно устанавливаться поля `created_at` - дата создания статьи, `updated_at` - дата обновления статьи. При создании статьи, поля `updated_at` и `created_at` имеют одинаковую дату.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+##### Параметры тела запроса
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- `title` - заголовок статьи
+- `body` - тело статьи
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+##### Параметры ответа
 
-## Learn More
+- `id` - уникальный идентификатор
+- `title` - заголовок статьи
+- `body` - тело статьи
+- `updated_at` - время обновления статьи
+- `created_at` - время создания статьи
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Например, делаем запрос:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```json
+{
+    "title": "Article #1",
+    "body": "Body ..."
+}
+```
 
-### Code Splitting
+в ответ на запрос получаем,
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+```json
+{
+    "id": "5b15395fb5ff829e402cd0e4",
+    "title": "Article #1",
+    "body": "Body ...",
+    "updated_at": "2019-02-22T08:17:34.805Z",
+    "created_at": "2019-02-22T08:17:34.805Z"
+}
+```
 
-### Analyzing the Bundle Size
+Предусмотреть валидацию полей:
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+- `title`  - обязательное поле, а также не может быть пустым полем
+- `body` - обязательное поле, а также не может быть пустым полем
 
-### Making a Progressive Web App
+В случае запроса с пустым полем или его отсутствием необходимо вернуть ошибки с HTTP Status Code равным 422 и телом ответа, например, при пустом title:
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+```json
+{
+    "errors": [{  
+        "field": "title",
+        "error": "title is required"
+    }]
+}
+```
 
-### Advanced Configuration
+#### PUT v1/articles/:id - обновление статьи
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+##### Параметры
 
-### Deployment
+- `id` - уникальный идентификатор созданной статьи
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+##### Параметры тела запроса
 
-### `npm run build` fails to minify
+- `title` - заголовок статьи
+- `body` - тело статьи
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+##### Параметры ответа
+
+- `id` - уникальный идентификатор
+- `title` - заголовок статьи
+- `body` - тело статьи
+- `updated_at` - время обновления статьи
+- `created_at` - время создания статьи
+
+Например, делаем `PUT` запрос:
+
+```json
+{
+    "title": "Updated Article #1",
+    "body": "Updated Body ..."
+}
+```
+
+в ответ получаем
+
+```json
+{
+    "id": "5b15395fb5ff829e402cd0e4",
+    "title": "Updated Article #1",
+    "body": "Updated Body ...",
+    "updated_at": "2019-02-23T00:10:00.000Z",
+    "created_at": "2019-02-22T08:17:34.805Z"
+}
+```
+
+Предусмотреть при обновлении статьи обновление поля `updated_at`.
+Предусмотреть валидацию и ответ при ошибке такими же, как и в методе создания статьи **POST** `v1/articles`.
+
+#### GET v1/articles?page=:pageNumber&limit=:limit
+
+Получение статей, отсортированных в порядке убывания по дате создания статьи, с возможностью в query-параметрах передачи параметров для постраничного получения данных и возможностью ограничить количество получаемых статей.
+
+##### Параметры
+
+- `page` - необязательное поле по умолчание равное `1`.
+- `limit` - необязательное поле по умолчание равное максимальному значению. Максимальное значение для `limit` равно `10`.
+
+Например, делаем запрос **GET** `/v1/articles?page=1&limit=2`, в ответ получаем первую страницу (query параметр `page` равен 1) и 2 статьи (query параметр `limit` равен 2) и параметр `count` - общее количество статей:
+
+```json
+{
+    "count": 25,
+    "page": 1,
+    "limit": 2,
+    "articles": [{
+        "id": "5b15395fb5ff829e402cd0e4",
+        "title": "Updated Article #1",
+        "body": "Updated Body ...",
+        "updated_at": "2019-02-23T00:10:00.000Z",
+        "created_at": "2019-02-22T08:17:34.805Z"
+    }, {
+        "id": "5b15395fb5ff829e402cd0e4",
+        "title": "Article #2",
+        "body": "Body ...",
+        "updated_at": "2019-02-22T08:17:34.805Z",
+        "created_at": "2019-02-22T08:17:34.805Z"
+    }]
+}
+```
+
+##### Описание ответа
+
+- `count` - общее количество статей
+- `page` - страница по которой отдан ответ
+- `limit` - ограничение с которым отдан ответ
+- `articles` - массив статей
+
+Предусмотреть валидацию в методе на поля:
+
+- `page` - число, необязательное поле
+- `limit` - число, необязательное поле. Максимальный `limit` равен `10`.
+
+В случае неверных данных для `page` и `limit` отдавать в ответ структуру ошибок такую же, как и в методе создания статьи **POST** `v1/articles`.
+
+#### GET v1/articles/:id - получение статьи по id
+
+##### Параметры
+
+- `id` - уникальный идентификатор статьи
+
+##### Параметры ответа
+
+- `id` - уникальный идентификатор
+- `title` - заголовок статьи
+- `body` - тело статьи
+- `updated_at` - время обновления статьи
+- `created_at` - время создания статьи
+
+Например, делаем запрос **GET** `v1/articles/5b15395fb5ff829e402cd0e4` получаем ответ:
+
+```json
+{
+    "id": "5b15395fb5ff829e402cd0e4",
+    "title": "Article #1",
+    "body": "Body ...",
+    "updated_at": "2019-02-22T08:17:34.805Z",
+    "created_at": "2019-02-22T08:17:34.805Z"
+}
+```
+
+В случае отсутствия статьи с передаваемой `:id` возвращать HTTP Status Code равным 404 и телом ответа:
+
+```json
+{
+    "errors": [{
+        "field": "id",
+        "error": "Not Found"
+    }]
+}
+```
+
+## Выполнить задачу по созданию Web UI с использованием React и Redux
+
+### Базовые требования
+
+- Для Web UI должно использоваться API из задания №1.
+- Обязательно использование React и Redux
+- Обязательно использование Bootstrap
+- Web UI должно по умолчанию запускаться на http://localhost:8081 с помощью следующей последовательности команд в консоли из папки проекта и использовать API, находящееся по адресу http://localhost:8080:
+
+```bash
+npm i # установка пакетов
+npm start # старт Web UI
+```
+
+### Web UI имеет следующий функционал
+
+Вверху страницы (в хедере) вставить логотип PixelPlex [https://image.ibb.co/k7cmVT/logo_w.png](https://image.ibb.co/k7cmVT/logo_w.png). По клику на логотип открывается окно в новой вкладке, которая ведет на сайт [https://pixelplex.io/](https://pixelplex.io/)
+
+![logo in header](https://gist.githubusercontent.com/pixelplex/0536beffba1551c01b58a244b1f325fd/raw/df4fecd70897e6fe09e1a0c71535db5028937d78/logo.png)
+
+Страница статей с пагинацией `/articles`. По клику на кнопки пагинации происходит загрузка данных по необходимой странице через API метод получения статей **GET** `v1/articles?page=:pageNumber&limit=:limit`.
+
+Предусмотреть изменение query параметра в браузере, т.е., например, перейдя на страницу номер 3 - URL в браузере изменится на `/articles?page=3`.
+
+Предусмотреть после прямого перехода на страницу `/articles?page=3` открытие страницы с номером 3.
+
+![articles-list.png](https://gist.githubusercontent.com/pixelplex/0536beffba1551c01b58a244b1f325fd/raw/df4fecd70897e6fe09e1a0c71535db5028937d78/articles-list.png)
+
+*Прототип страницы просмотра статей с пагинацией на странице номер 3 `/articles?page=3`*
+
+Страница создания статьи `/articles/create`. По клику на странице `/articles` кнопки “Create” открывать страницу `/articles/create`. После заполнения полей title и body и нажатия на кнопку “Create” создавать статью через API метод **POST** `v1/articles`. После создания статьи делать перенаправление(редирект) на страницу `/articles`. Предусмотреть вывод ошибок в случае пустых полей `title` и `body` (Например, Title is required, в случае пустого поля title). По клику на кнопку “Cancel” перенаправлять на страницу `/articles`.
+
+![create-article.png](https://gist.githubusercontent.com/pixelplex/0536beffba1551c01b58a244b1f325fd/raw/df4fecd70897e6fe09e1a0c71535db5028937d78/create-article.png)
+
+*Прототип страницы создания статьи `/articles/create` после нажатия на кнопку “Create” и пустом поле `title`*
+
+Модальное окно просмотра статьи. По клику по кнопке “View” на странице `/articles` открывать модальное окно с данными по статье, полученными через API метод **GET** `/articles/:id`. Выводим поля `title`, `body`, `created_at`, `updated_at`.
+
+![view-article.png](https://gist.githubusercontent.com/pixelplex/0536beffba1551c01b58a244b1f325fd/raw/df4fecd70897e6fe09e1a0c71535db5028937d78/view-article.png)
+
+*Прототип страницы просмотра статьи в модальном окне на странице `/articles`*
+
+Страница редактирования статьи `/articles/:id/edit`. По клику на странице `/articles` кнопки “Edit” открывать страницу `/articles/:id/edit`, где `:id` - это уникальный номер статьи по которой происходил переход. После ввода `title` и `body` и нажатия на кнопку “Update” обновлять статью через API метод **PUT** `v1/articles/:id`. После обновления статьи делать перенаправление на страницу `/articles`. Предусмотреть вывод ошибок в случае пустых полей `title` и `body`, как и на странице создания статьи. По клику на кнопку “Cancel” перенаправлять на страницу `/articles`.
+
+![edit-article.png](https://gist.githubusercontent.com/pixelplex/0536beffba1551c01b58a244b1f325fd/raw/df4fecd70897e6fe09e1a0c71535db5028937d78/edit-article.png)
+
+*Прототип страницы редактирования статьи `/articles/:id/edit` после нажатия на кнопку “Update” и пустом поле `title`*
+
+-----
+
+**Обратите внимание!**
+
+Выполненное тестовое задание необходимо передать в ввиде ссылки на ваши репозитории на github.

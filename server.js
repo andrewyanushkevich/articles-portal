@@ -1,83 +1,75 @@
-const express = require("express");
-const MongoClient = require('mongodb').MongoClient;
-const objectId = require("mongodb").ObjectID;
-const bodyParser = require("body-parser");
+const express = require('express');
+const { MongoClient } = require('mongodb');
+const cors = require('cors')
+const ObjectId = require('mongodb').ObjectID;
 
-const server = express()
+const server = express();
 const app = express();
-const jsonParser = express.json();
 
-const mongoClient = new MongoClient("mongodb://localhost:27017/", { useNewUrlParser: true });
+app.use(express.json({type: '*/*'}));
+server.use(express.json({type: '*/*'}));
+server.use(cors());
+
+const mongoClient = new MongoClient('mongodb://localhost:27017/', { useNewUrlParser: true });
 let dbClient;
 
-server.use(express.static(__dirname + '/client/build'));
-server.use(bodyParser.urlencoded({ extended: false }))
-server.use(bodyParser.json());
-
-app.use(express.static(__dirname + '/client/build'));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(express.static(`${__dirname}/client/build`));
 
 mongoClient.connect((err, client) => {
-    if(err) return console.log(err);
-    dbClient = client;
-    app.locals.collection = client.db("articlesdb").collection("articles");
-    app.listen(8080, () => {
-      console.log("listen 8080")
-    });
-    console.log("Connection")
-})
-
-server.get('/', (req, res) => {
-    res.redirect(301, "/articles");
+  if (err) return console.log(err);
+  dbClient = client;
+  server.locals.collection = client.db('articlesdb').collection('articles');
+  server.listen(8080, () => {
+    console.log('listen 8080');
   });
-
-  server.get('/articles', (req, res) => {
-    res.sendFile(__dirname + "/client/build/index.html");
+  console.log('Connection');
 });
 
-server.listen(8081, () => {
-  console.log("listen 8081")
+app.get('/', (req, res) => {
+  res.redirect(301, '/articles');
 });
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content_type, Accept");
-  next();
-})
+app.get('/articles', (req, res) => {
+  res.sendFile(`${__dirname}/client/build/index.html`);
+});
 
-app.post("/article", jsonParser, (req, res) => {
-  console.log("before insert");
-  const collection = req.app.locals.collection;
-  const title = req.body.title;
-  const body = req.body.body;
-  const article = {title: title, body: body, createdAt: new Date(), unpdatedAt: new Date()};
+app.listen(8081, () => {
+  console.log('listen 8081');
+});
+
+server.post('/v1/article', (req, res) => {
+  console.log('before insert');
+  const { collection } = req.app.locals;
+  const  title  = req.body.title;
+  const  body  = req.body.body;
+  const article = {
+    title, body, createdAt: new Date(), unpdatedAt: new Date(),
+  };
   console.log(article);
   collection.insertOne(article, (err, result) => {
-    if(err) throw err;
-    console.log("inserted");
+    if (err) throw err;
+    console.log('inserted');
     console.log(result);
-    res.send(article);
-  })
-}); 
+    res.send(JSON.stringify(article));
+  });
+});
 
-app.put("/articles/:id", (req, res) => {
-  const collection = req.app.locals.collection;
-  const id = new objectId(req.body.id);
-  const title = req.body.title;
-  const body = req.body.body;
+server.put('/v1/articles/:id', (req, res) => {
+  const { collection } = req.app.locals;
+  const id = new ObjectId(req.body.id);
+  const { title } = req.body;
+  const { body } = req.body;
 
-  collection.findOneAndUpdate({_id: id}, 
-    { $set: {title: title, body: body, unpdatedAt: new Date()}}, (err, result) => {
-    if(err) throw err;
-    console.log(result);
-    const article = result.value;
-    res.send(article)
-  })
-})
+  collection.findOneAndUpdate({ _id: id },
+    { $set: { title, body, unpdatedAt: new Date() } }, (err, result) => {
+      if (err) throw err;
+      console.log(result);
+      const article = result.value;
+      res.send(article);
+    });
+});
 
-
-process.on("SIGINT", () => {
+process.on('SIGINT', () => {
   dbClient.close();
   process.exit();
 });

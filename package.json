@@ -1,5 +1,5 @@
 {
-  "name": "temp",
+  "name": "article-portal",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -11,12 +11,11 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
     "express": "^4.16.4",
-    "mongodb": "^3.2.3",
-    "react-router-dom": "^5.0.0"
+    "mongodb": "^3.2.3"
   },
   "devDependencies": {
-    "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.17.2",
     "eslint-plugin-jsx-a11y": "^6.2.1",

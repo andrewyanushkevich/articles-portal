@@ -1,7 +1,7 @@
-/* eslint-disable no-tabs */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Article from '../article/article';
+import './article-list.css';
 
 export class List extends Component {
   constructor(props) {
@@ -15,22 +15,21 @@ export class List extends Component {
   }
 
   render() {
+    const { history } = this.props;
     return (
-      <div>
-  			<div className="create-btn">
-  				<button className="btn btn-outline-dark" onClick={this.createBtn}>Create</button>
-				</div>
-  		<div>
-  			{this.props.articles.map(item => (
-  				<Article
-  					id={item.id}
-						title={item.title}
-						body={item.body}
-						history={this.props.history}
-					/>
-					))}
+      <div className="article-list">
+        <div className="create-btn">
+          <button onClick={this.createBtn} type="button">Create</button>
+        </div>
+        <div>
+          {this.props.articles.map(item => (
+            <Article
+              article={item}
+              history={history}
+            />
+          ))}
+        </div>
       </div>
-			</div>
     );
   }
 }

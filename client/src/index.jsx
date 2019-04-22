@@ -10,7 +10,7 @@ import List from './components/article-list/article-list';
 import CreateArticle from './components/create-article/create-article';
 import EditArticle from './components/edit-article/edit-article';
 import store from './store';
-
+import './index.css';
 
 ReactDOM.render(
   <Provider store={store}>
@@ -19,7 +19,7 @@ ReactDOM.render(
       <Switch>
         <Route exact path="/articles" component={List} />
         <Route exact path="/articles/create" component={CreateArticle} />
-        <Route exact path="/articles/edit/:id" component={EditArticle} />
+        <Route path="/articles/:id/edit" component={EditArticle} />
         <Redirect from="/" to="/articles" />
       </Switch>
     </BrowserRouter>

@@ -1,0 +1,17 @@
+.edit-article-form {
+    margin: 3vw;
+    border: 3px solid black;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+.edit-article-title {
+    width: 50%;
+    margin: 1vw;
+}
+
+.edit-article-body {
+    width: 100%;
+    margin: 1vw;
+}

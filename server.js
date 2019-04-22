@@ -1,19 +1,24 @@
 const express = require('express');
 const { MongoClient } = require('mongodb');
-const cors = require('cors')
+const cors = require('cors');
 const ObjectId = require('mongodb').ObjectID;
+const bodyParser = require('body-parser');
+
 
 const server = express();
 const app = express();
 
-app.use(express.json({type: '*/*'}));
-server.use(express.json({type: '*/*'}));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(express.json({ type: '*/*' }));
+server.use(express.json({ type: '*/*' }));
 server.use(cors());
 
 const mongoClient = new MongoClient('mongodb://localhost:27017/', { useNewUrlParser: true });
 let dbClient;
 
 app.use(express.static(`${__dirname}/client/build`));
+server.use(express.static(`${__dirname}/client/build`));
 
 mongoClient.connect((err, client) => {
   if (err) return console.log(err);
@@ -38,19 +43,26 @@ app.listen(8081, () => {
 });
 
 server.post('/v1/article', (req, res) => {
-  console.log('before insert');
   const { collection } = req.app.locals;
-  const  title  = req.body.title;
-  const  body  = req.body.body;
+  const { title } = req.body;
+  const { body } = req.body;
   const article = {
     title, body, createdAt: new Date(), unpdatedAt: new Date(),
   };
-  console.log(article);
+
   collection.insertOne(article, (err, result) => {
     if (err) throw err;
-    console.log('inserted');
-    console.log(result);
     res.send(JSON.stringify(article));
+  });
+});
+
+server.get('/v1/articles/:id', (req, res) => {
+  const { collection } = req.app.locals;
+
+  collection.find({ _id: req.params.id }, (err, result) => {
+    if (err) throw err;
+    const article = result.value;
+    res.send(article);
   });
 });
 
@@ -60,10 +72,9 @@ server.put('/v1/articles/:id', (req, res) => {
   const { title } = req.body;
   const { body } = req.body;
 
-  collection.findOneAndUpdate({ _id: id },
-    { $set: { title, body, unpdatedAt: new Date() } }, (err, result) => {
+  collection.findOneAndUpdate({ _id: req.params.id },
+    { $set: { title, body, unpdatedAt: new Date() }, returnOriginal: false }, (err, result) => {
       if (err) throw err;
-      console.log(result);
       const article = result.value;
       res.send(article);
     });

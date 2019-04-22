@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Container } from 'reactstrap';
+import { Button, Container } from 'reactstrap';
+
 import View from '../view-article/view';
+import './article.css';
 
 class Article extends Component {
   constructor(props) {
@@ -10,8 +12,9 @@ class Article extends Component {
     this.viewBtn = this.viewBtn.bind(this);
   }
 
-  editBtn() {
-    this.props.history.push('/articles/edit/:id=1');
+  editBtn(e) {
+    e.preventDefault();
+    this.props.history.push(`/articles/${this.props.article._id}/edit`);
   }
 
   viewBtn() {
@@ -19,15 +22,21 @@ class Article extends Component {
   }
 
   render() {
+    const article = this.props.article;
+
     return (
-      <div>
-        <p>{this.props.id}</p>
-        <p>{this.props.title}</p>
-        <p>{this.props.body}</p>
-        <button onClick={this.editBtn}>Edit</button>
-        <Container>
-          <View buttonLabel="view" />
-        </Container>
+      <div className="article">
+        <div className="article-id">{article._id}</div>
+        <div className="article-title">{article.title}</div>
+        <div className="article-body">{article.body}</div>
+        <div className="article-buttons">
+          <Container>
+            <Button onClick={this.editBtn} type="button">Edit</Button>
+          </Container>
+          <Container>
+            <View buttonLabel="view" article={article} />
+          </Container>
+        </div>
       </div>
     );
   }

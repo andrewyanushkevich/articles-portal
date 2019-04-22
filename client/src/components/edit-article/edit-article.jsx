@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import store from '../../store';
-import { updateArticle } from '../../actions/actions';
+
+import { update } from '../../api/api';
+import './edit-article.css';
 
 class EditArticle extends Component {
   constructor(props) {
@@ -17,15 +18,8 @@ class EditArticle extends Component {
     const title = createArticleForm.elements.title.value;
     const body = createArticleForm.elements.body.value;
     const article = JSON.stringify({ title, body });
-    const xhttp = new XMLHttpRequest();
-    const url = '../../article';
-    xhttp.open('PUT', url, true);
-    xhttp.setRequestHeader('Content-Type', 'application/json');
-    xhttp.addEventListener('load', () => {
-      console.log(xhttp.response);
-      store.dispatch(updateArticle({ title, body }));
-      history.push('/articles');
-    });
+
+    update(article, history);
   }
 
   cancelBtn(e) {
@@ -35,12 +29,12 @@ class EditArticle extends Component {
 
   render() {
     return (
-      <form name="editArticleForm">
-        <div>
+      <form name="editArticleForm" className="edit-article-form">
+        <div className="edit-article-title">
           <span>Title</span>
           <input name="title" />
         </div>
-        <div>
+        <div className="edit-article-body">
           <span>Body</span>
           <input name="body" />
         </div>

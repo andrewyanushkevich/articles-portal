@@ -11,16 +11,17 @@ import CreateArticle from './components/create-article/create-article';
 import EditArticle from './components/edit-article/edit-article';
 import store from './store';
 import './index.css';
+import { ARTICLES_PAGE_URL } from './api/api';
 
 ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
       <Header />
       <Switch>
-        <Route exact path="/articles" component={List} />
-        <Route exact path="/articles/create" component={CreateArticle} />
-        <Route path="/articles/:id/edit" component={EditArticle} />
-        <Redirect from="/" to="/articles" />
+        <Route exact path={`${ARTICLES_PAGE_URL}`} component={List} />
+        <Route exact path={`${ARTICLES_PAGE_URL}/create`} component={CreateArticle} />
+        <Route path={`${ARTICLES_PAGE_URL}/:id/edit`} component={EditArticle} />
+        <Redirect from="/" to={`${ARTICLES_PAGE_URL}`} />
       </Switch>
     </BrowserRouter>
   </Provider>, document.body,

@@ -1,28 +1,28 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Article from '../article/article';
+import Article from '@src/components/article/article';
 import './article-list.css';
+import { ARTICLES_PAGE_URL } from '@src/api/api';
 
 export class List extends Component {
   constructor(props) {
     super(props);
-
-    this.createBtn = this.createBtn.bind(this);
   }
 
-  createBtn() {
-    this.props.history.push('/articles/create');
-  }
-
-  render() {
+  createArticle() {
     const { history } = this.props;
+    history.push(`${ARTICLES_PAGE_URL}/create`);
+  }
+  
+  render() {
+    const { history, articles } = this.props;
     return (
       <div className="article-list">
         <div className="create-btn">
-          <button onClick={this.createBtn} type="button">Create</button>
+          <button onClick={() => this.createArticle()} type="button">Create</button>
         </div>
         <div>
-          {this.props.articles.map(item => (
+          {articles.map(item => (
             <Article
               article={item}
               history={history}

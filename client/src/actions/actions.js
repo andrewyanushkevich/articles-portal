@@ -1,9 +1,11 @@
+import { ADD_ARTICLE, UPDATE_ARTICLE } from '@src/reducer/reducer';
+
 const addArticle = article => ({
-  type: 'ADD_ARTICLE',
+  type: ADD_ARTICLE,
   article,
 });
 const updateArticle = article => ({
-  type: 'UPDATE_ARTICLE',
+  type: UPDATE_ARTICLE,
   article,
 });
 

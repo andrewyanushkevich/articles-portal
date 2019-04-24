@@ -1,48 +1,61 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
-import { add } from '../../api/api';
+import { add, ARTICLES_PAGE_URL } from '@src/api/api';
 import './create-article.css';
 
 class Create extends Component {
   constructor(props) {
     super(props);
 
-    this.createBtn = this.createBtn.bind(this);
-    this.cancelBtn = this.cancelBtn.bind(this);
+    this.state = {
+      title: '',
+      body: ''
+    };
   }
 
-  createBtn(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
 
-    const history = this.props.history;
-    const { createArticleForm } = document.forms;
-    const articleTitle = createArticleForm.elements.title.value;
-    const articleBody = createArticleForm.elements.body.value;
-    const article = JSON.stringify({ title: articleTitle, body: articleBody });
+    const { history } = this.props;
+    
+    const article = JSON.stringify({ title: this.state.title, body: this.state.body });
 
     add(article, history);
   }
 
-  cancelBtn(e) {
+  cancel = (e) => {
     e.preventDefault();
-    this.props.history.push('/articles');
+    const { history } = this.props;
+    history.push(ARTICLES_PAGE_URL);
+  }
+
+  handleInputChange = (event) => {
+    event.preventDefault();
+    
+    const { target } = event;
+    const { name } = target;
+    const { value } = target;
+
+    this.setState(() => {
+      return { [name]: value };
+    });
   }
 
   render() {
     return (
-      <form name="createArticleForm" className="create-article-form">
-        <div className="create-article-title">
+      <form className="create-article">
+        <div className="create-article__title">
           <p>Title</p>
-          <input name="title" />
+          <input name="title" onInput={this.handleInputChange} />
         </div>
-        <div className="create-article-body">
+        <div className="create-article__body">
           <p>Body</p>
-          <textarea name="body" />
+          <textarea name="body" onInput={this.handleInputChange} />
         </div>
         <div>
-          <button onClick={this.createBtn}>OK</button>
-          <button onClick={this.cancelBtn}>Cancel</button>
+          <button onClick={e => this.handleSubmit(e)}>OK</button>
+          <button onClick={e => this.cancel(e)}>Cancel</button>
         </div>
       </form>
     );

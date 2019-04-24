@@ -2,36 +2,32 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Button, Container } from 'reactstrap';
 
-import View from '../view-article/view';
+import View from '@src/components/view-article/view';
 import './article.css';
+import { ARTICLES_PAGE_URL } from '@src/api/api';
 
 class Article extends Component {
   constructor(props) {
     super(props);
-    this.editBtn = this.editBtn.bind(this);
-    this.viewBtn = this.viewBtn.bind(this);
   }
 
-  editBtn(e) {
+  editArticle(e) {
     e.preventDefault();
-    this.props.history.push(`/articles/${this.props.article._id}/edit`);
-  }
-
-  viewBtn() {
-    ReactDOM.render(<View />, document.body);
+    const { history, article } = this.props;
+    history.push(`${ARTICLES_PAGE_URL}/${article._id}/edit`);
   }
 
   render() {
-    const article = this.props.article;
+    const { article } = this.props;
 
     return (
       <div className="article">
-        <div className="article-id">{article._id}</div>
-        <div className="article-title">{article.title}</div>
-        <div className="article-body">{article.body}</div>
-        <div className="article-buttons">
+        <div className="article__id">{article._id}</div>
+        <div className="article__title">{article.title}</div>
+        <div className="article__body">{article.body}</div>
+        <div className="article__buttons">
           <Container>
-            <Button onClick={this.editBtn} type="button">Edit</Button>
+            <Button onClick={e => this.editArticle(e)} type="button">Edit</Button>
           </Container>
           <Container>
             <View buttonLabel="view" article={article} />

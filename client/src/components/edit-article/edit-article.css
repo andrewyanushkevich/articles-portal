@@ -1,4 +1,4 @@
-.edit-article-form {
+.edit-article {
     margin: 3vw;
     border: 3px solid black;
     width: 50%;
@@ -6,12 +6,12 @@
     flex-direction: column;
 }
 
-.edit-article-title {
+.edit-article__title {
     width: 50%;
     margin: 1vw;
 }
 
-.edit-article-body {
+.edit-article__body {
     width: 100%;
     margin: 1vw;
 }

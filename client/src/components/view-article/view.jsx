@@ -7,26 +7,22 @@ class View extends Component {
   constructor(props, context) {
     super(props, context);
 
-    this.toggle = this.toggle.bind(this);
-
     this.state = {
       modal: false,
     };
   }
 
   toggle() {
-    this.setState({
-      modal: !this.state.modal,
-    });
+    this.setState(state => ({ modal: !state.modal }));
   }
 
   render() {
-    const article = this.props.article;
+    const { article } = this.props;
 
     return (
       <div>
         <div>
-          <Button color="info" onClick={this.toggle}>View</Button>
+          <Button color="info" onClick={() => this.toggle()}>View</Button>
         </div>
         <Modal isOpen={this.state.modal} size="lg">
           <div>
@@ -43,7 +39,7 @@ class View extends Component {
                 updated at:
                 {` ${article.unpdatedAt.toLocaleString()}`}
               </span>
-              <Button onClick={this.toggle}>
+              <Button onClick={() => this.toggle()}>
                   Close
               </Button>
             </ModalFooter>

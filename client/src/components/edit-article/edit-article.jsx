@@ -1,46 +1,59 @@
 import React, { Component } from 'react';
 
-import { update } from '../../api/api';
+import { update, ARTICLES_PAGE_URL } from '@src/api/api';
 import './edit-article.css';
 
 class EditArticle extends Component {
   constructor(props) {
     super(props);
 
-    this.editBtn = this.editBtn.bind(this);
-    this.cancelBtn = this.cancelBtn.bind(this);
+    this.state = {
+      title: '',
+      body: ''
+    };
   }
 
-  editBtn(e) {
+  handleSubmit = (event) => {
+    event.preventDefault();
+
     const { history } = this.props;
-    e.preventDefault();
-    const createArticleForm = document.forms.editArticleForm;
-    const title = createArticleForm.elements.title.value;
-    const body = createArticleForm.elements.body.value;
-    const article = JSON.stringify({ title, body });
+
+    const article = JSON.stringify({ title: this.state.title, body: this.state.body });
 
     update(article, history);
   }
 
-  cancelBtn(e) {
-    e.preventDefault();
-    this.props.history.push('/articles');
+  cancel = (event) => {
+    event.preventDefault();
+    const { history } = this.props;
+    history.push(`${ARTICLES_PAGE_URL}/articles`);
+  }
+
+  handleInputChange = (event) => {
+    event.preventDefault();
+    const { target } = event;
+    const { name } = target;
+    const { value } = target;
+
+    this.setState(() => {
+      return { [name]: value };
+    });
   }
 
   render() {
     return (
-      <form name="editArticleForm" className="edit-article-form">
-        <div className="edit-article-title">
+      <form className="edit-article">
+        <div className="edit-article__title">
           <span>Title</span>
           <input name="title" />
         </div>
-        <div className="edit-article-body">
+        <div className="edit-article__body">
           <span>Body</span>
           <input name="body" />
         </div>
         <div>
-          <button onClick={this.editbtn}>OK</button>
-          <button onClick={this.cancelBtn}>Cancel</button>
+          <button onClick={e => this.handleSubmit(e)}>OK</button>
+          <button onClick={e => this.cancel(e)}>Cancel</button>
         </div>
       </form>
     );

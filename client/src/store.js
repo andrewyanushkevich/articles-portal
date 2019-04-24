@@ -1,11 +1,10 @@
 import { createStore } from 'redux';
-import reducer from './reducer/reducer';
+import { reducer } from '@src/reducer/reducer';
 
 const initialState = {
-  articles: [{
-    _id: 1, title: 'Article Title', body: 'Body', createdAt: new Date(), unpdatedAt: new Date(),
-  }],
+  articles: [],
 };
+
 const store = createStore(reducer, initialState);
 
 export default store;

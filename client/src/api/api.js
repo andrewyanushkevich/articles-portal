@@ -1,5 +1,7 @@
-import store from '../store';
+import store from '@src/store';
 import { addArticle, updateArticle } from '../actions/actions';
+
+export const ARTICLES_PAGE_URL = '/articles';
 
 export function add(article, history) {
   fetch('http://localhost:8080/v1/article', {
@@ -10,13 +12,12 @@ export function add(article, history) {
     if (response.ok) {
       return response.json();
     }
-    throw new Error('Request failed!');
+    throw new Error('Article has not been added' );
   }, (networkError) => {
-    console.log(networkError.message);
+    alert(networkError.message);
   }).then((jsonResponse) => {
-    console.log(jsonResponse);
     store.dispatch(addArticle(jsonResponse));
-    history.push('/articles');
+    history.push(ARTICLES_PAGE_URL);
   });
 }
 
@@ -29,11 +30,10 @@ export function update(article, history) {
     if (response.ok) {
       return response.json();
     }
-    throw new Error('Request failed!');
+    throw new Error('Article has not been updated!');
   }, (networkError) => {
-    console.log(networkError.message);
+    alert(networkError.message);
   }).then((jsonResponse) => {
-    console.log(jsonResponse);
     store.dispatch(updateArticle(jsonResponse));
     history.push('/articles');
   });

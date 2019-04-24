@@ -6,25 +6,25 @@
     flex-basis: 100%;
 }
 
-.article-id {
+.article__id {
     border-right: 3px solid black;
     flex-basis: 40vw;
     text-align: center
 }
 
-.article-title {
+.article__title {
     flex-basis: 40vw;
     text-align: center;
     border-right: 3px solid black;
 }
 
-.article-body {
+.article__body {
     flex-basis: 80vw;
     text-align: center;
     border-right: 3px solid black;
 }
 
-.article-buttons {
+.article__buttons {
     display: flex;
     flex-direction: row;
     width: 30vw;

@@ -56,16 +56,6 @@ server.post('/v1/article', (req, res) => {
   });
 });
 
-server.get('/v1/articles/:id', (req, res) => {
-  const { collection } = req.app.locals;
-
-  collection.find({ _id: req.params.id }, (err, result) => {
-    if (err) throw err;
-    const article = result.value;
-    res.send(article);
-  });
-});
-
 server.put('/v1/articles/:id', (req, res) => {
   const { collection } = req.app.locals;
   const id = new ObjectId(req.body.id);
